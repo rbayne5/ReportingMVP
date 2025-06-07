@@ -6,24 +6,77 @@ import { BlobProvider } from '@react-pdf/renderer'
 import { ReportPDF } from '@/components/reports/ReportPDF'
 import AlertsList from '@/components/reports/AlertsList'
 import type { ReportWithData, Property } from '@/types/report'
+import type { GetServerSideProps } from 'next'
 
-export default function ReportDetail() {
-  const [report, setReport] = useState<ReportWithData | null>(null)
-  const [property, setProperty] = useState<Property | null>(null)
-  const [loading, setLoading] = useState(true)
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id } = context.params || {}
+  
+  if (!id) {
+    return {
+      notFound: true
+    }
+  }
+
+  try {
+    const { data: reportData, error: reportError } = await supabase
+      .from('reports')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (reportError || !reportData) {
+      return {
+        notFound: true
+      }
+    }
+
+    const { data: propertyData, error: propertyError } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('id', reportData.property_id)
+      .single()
+
+    if (propertyError || !propertyData) {
+      return {
+        notFound: true
+      }
+    }
+
+    return {
+      props: {
+        initialReport: reportData,
+        initialProperty: propertyData
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching report:', error)
+    return {
+      notFound: true
+    }
+  }
+}
+
+interface ReportDetailProps {
+  initialReport: ReportWithData
+  initialProperty: Property
+}
+
+export default function ReportDetail({ initialReport, initialProperty }: ReportDetailProps) {
+  const [report, setReport] = useState<ReportWithData>(initialReport)
+  const [property, setProperty] = useState<Property>(initialProperty)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const { id } = router.query
 
   const fetchReport = useCallback(async () => {
-    if (!id) return
+    if (!router.query.id) return
 
     try {
       setLoading(true)
       const { data: reportData, error: reportError } = await supabase
         .from('reports')
         .select('*')
-        .eq('id', id)
+        .eq('id', router.query.id)
         .single()
 
       if (reportError) throw reportError
@@ -44,13 +97,13 @@ export default function ReportDetail() {
     } finally {
       setLoading(false)
     }
-  }, [id])
+  }, [router.query.id])
 
   useEffect(() => {
-    if (id) {
+    if (router.query.id) {
       fetchReport()
     }
-  }, [id, fetchReport])
+  }, [router.query.id, fetchReport])
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
