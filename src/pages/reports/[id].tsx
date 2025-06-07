@@ -6,29 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { ReportPDF } from '@/components/reports/ReportPDF'
 import AlertsList from '@/components/reports/AlertsList'
-import type { Database } from '@/lib/supabaseClient'
-
-type Report = Database['public']['Tables']['reports']['Row']
-type Property = Database['public']['Tables']['properties']['Row']
-
-interface ReportData {
-  energy_usage?: {
-    total: number
-    unit: string
-  }
-  water_usage?: {
-    total: number
-    unit: string
-  }
-  waste_management?: {
-    total: number
-    unit: string
-  }
-}
-
-interface ReportWithData extends Omit<Report, 'report_data'> {
-  report_data: ReportData
-}
+import type { ReportWithData, Property } from '@/types/report'
 
 export default function ReportDetail() {
   const [report, setReport] = useState<ReportWithData | null>(null)
@@ -39,13 +17,9 @@ export default function ReportDetail() {
   const { id } = router.query
   const { user } = useAuth()
 
-  useEffect(() => {
-    if (id) {
-      fetchReport()
-    }
-  }, [id])
-
   const fetchReport = async () => {
+    if (!id) return
+
     try {
       setLoading(true)
       const { data: reportData, error: reportError } = await supabase
@@ -73,6 +47,12 @@ export default function ReportDetail() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (id) {
+      fetchReport()
+    }
+  }, [id])
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
