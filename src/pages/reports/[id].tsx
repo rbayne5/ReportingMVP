@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { supabase } from '@/lib/supabaseClient'
-import { useAuth } from '@/contexts/AuthContext'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { ReportPDF } from '@/components/reports/ReportPDF'
 import AlertsList from '@/components/reports/AlertsList'
@@ -15,9 +14,8 @@ export default function ReportDetail() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const { id } = router.query
-  const { user } = useAuth()
 
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     if (!id) return
 
     try {
@@ -46,13 +44,13 @@ export default function ReportDetail() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
 
   useEffect(() => {
     if (id) {
       fetchReport()
     }
-  }, [id])
+  }, [id, fetchReport])
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
