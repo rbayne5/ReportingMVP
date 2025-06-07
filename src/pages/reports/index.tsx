@@ -5,7 +5,7 @@ import ReportCard from '@/components/reports/ReportCard'
 import GenerateReportModal from '@/components/reports/GenerateReportModal'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 
 type Report = Database['public']['Tables']['reports']['Row']
 

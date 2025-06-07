@@ -1,4 +1,4 @@
-import { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 
 type Report = Database['public']['Tables']['reports']['Row']
 

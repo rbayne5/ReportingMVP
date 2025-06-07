@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 import { supabase } from '@/lib/supabaseClient'
 
 type Property = Database['public']['Tables']['properties']['Row']

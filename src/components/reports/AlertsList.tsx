@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import type { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 
 type Alert = Database['public']['Tables']['alerts']['Row']
 

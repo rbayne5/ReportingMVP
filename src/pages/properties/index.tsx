@@ -4,7 +4,7 @@ import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyModal from '@/components/properties/PropertyModal'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 
 type Property = Database['public']['Tables']['properties']['Row']
 
