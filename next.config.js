@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  experimental: {
-    serverActions: true
+  images: {
+    domains: ['localhost'],
   }
 }
 
