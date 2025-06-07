@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { supabase } from '@/lib/supabaseClient'
-import { PDFDownloadLink } from '@react-pdf/renderer'
+import { BlobProvider } from '@react-pdf/renderer'
 import { ReportPDF } from '@/components/reports/ReportPDF'
 import AlertsList from '@/components/reports/AlertsList'
 import type { ReportWithData, Property } from '@/types/report'
@@ -122,13 +122,18 @@ export default function ReportDetail() {
               {report.compliance_status.replace('_', ' ')}
             </span>
             {report && property && (
-              <PDFDownloadLink
-                document={<ReportPDF report={report} property={property} />}
-                fileName={`esg-report-${report.id}.pdf`}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                {({ loading }) => (loading ? 'Generating PDF...' : 'Export PDF')}
-              </PDFDownloadLink>
+              <BlobProvider document={<ReportPDF report={report} property={property} />}>
+                {({ blob, url, loading }) => (
+                  <a
+                    href={url || '#'}
+                    download={`esg-report-${report.id}.pdf`}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    style={{ pointerEvents: loading ? 'none' : 'auto' }}
+                  >
+                    {loading ? 'Generating PDF...' : 'Export PDF'}
+                  </a>
+                )}
+              </BlobProvider>
             )}
           </div>
         </div>
