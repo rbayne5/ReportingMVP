@@ -1,4 +1,4 @@
-import { Database } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/database.types'
 
 type Property = Database['public']['Tables']['properties']['Row']
 
@@ -13,7 +13,11 @@ export default function PropertyCard({ property, onEdit, onDelete }: PropertyCar
     <div className="bg-white shadow rounded-lg overflow-hidden">
       <div className="p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900">{property.name}</h3>
+          <div>
+            <h3 className="text-lg font-medium text-gray-900">{property.name}</h3>
+            <p className="mt-1 text-sm text-gray-500">{property.address}</p>
+            <p className="mt-1 text-sm text-gray-500">Jurisdiction: {property.jurisdiction}</p>
+          </div>
           <div className="flex space-x-2">
             {onEdit && (
               <button
@@ -41,16 +45,9 @@ export default function PropertyCard({ property, onEdit, onDelete }: PropertyCar
           <div className="text-sm text-gray-500">
             <p className="flex items-center">
               <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              {property.address}
-            </p>
-            <p className="flex items-center mt-2">
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {property.jurisdiction}
+              Created: {new Date(property.created_at).toLocaleDateString()}
             </p>
           </div>
         </div>
